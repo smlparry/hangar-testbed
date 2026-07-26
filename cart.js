@@ -21,3 +21,5 @@ function bulkDiscount(items) {
 }
 
 module.exports = { subtotal, applyDiscount, bulkDiscount };
+
+// TODO: handle fractional cents.
