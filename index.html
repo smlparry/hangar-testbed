@@ -83,7 +83,10 @@
     </script>
     <script src="cart.js"></script>
     <script>
-      const { subtotal, applyDiscount } = module.exports;
+      // Not destructured: cart.js declares `function subtotal` at global scope,
+      // and a `const subtotal` beside it is a redeclaration that throws before
+      // anything renders.
+      const cart = module.exports;
 
       const items = [
         { name: "Mechanical keyboard", price: 149.0, qty: 1 },
@@ -92,8 +95,8 @@
       ];
 
       const money = (n) => "$" + n.toFixed(2);
-      const sub = subtotal(items);
-      const total = applyDiscount(sub, 10);
+      const sub = cart.subtotal(items);
+      const total = cart.applyDiscount(sub, 10);
 
       document.getElementById("items").innerHTML = items
         .map(
