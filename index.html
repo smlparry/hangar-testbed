@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Testbed — Cart</title>
+    <style>
+      :root { color-scheme: light; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background: #f4f4f5;
+        color: #18181b;
+        display: flex;
+        justify-content: center;
+        padding: 48px 16px;
+      }
+      main {
+        width: 100%;
+        max-width: 460px;
+        background: #fff;
+        border: 1px solid #e4e4e7;
+        border-radius: 12px;
+        padding: 28px 28px 24px;
+      }
+      h1 { font-size: 18px; margin: 0 0 4px; }
+      p.sub { margin: 0 0 22px; color: #71717a; font-size: 13px; }
+      ul { list-style: none; margin: 0; padding: 0; }
+      li {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid #f4f4f5;
+      }
+      li span.qty { color: #a1a1aa; font-variant-numeric: tabular-nums; }
+      li span.money { font-variant-numeric: tabular-nums; }
+      .totals { margin-top: 18px; font-size: 14px; }
+      .totals div { display: flex; justify-content: space-between; padding: 4px 0; }
+      .totals .grand {
+        margin-top: 8px;
+        padding-top: 12px;
+        border-top: 1px solid #e4e4e7;
+        font-size: 18px;
+        font-weight: 600;
+      }
+      .discount { color: #16a34a; }
+      button {
+        margin-top: 20px;
+        width: 100%;
+        padding: 11px;
+        border: 0;
+        border-radius: 8px;
+        background: #18181b;
+        color: #fafafa;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Your cart</h1>
+      <p class="sub">Rendered by <code>cart.js</code>, the module this repo exists to test.</p>
+
+      <ul id="items"></ul>
+
+      <div class="totals">
+        <div><span>Subtotal</span><span class="money" id="subtotal"></span></div>
+        <div class="discount"><span>Bulk discount (10%)</span><span class="money" id="discount"></span></div>
+        <div class="grand"><span>Total</span><span class="money" id="total"></span></div>
+      </div>
+
+      <button type="button">Checkout</button>
+    </main>
+
+    <!-- cart.js is CommonJS and is left exactly as it is. This is the shim that
+         lets the browser load it unchanged. -->
+    <script>
+      var module = { exports: {} };
+    </script>
+    <script src="cart.js"></script>
+    <script>
+      const { subtotal, applyDiscount } = module.exports;
+
+      const items = [
+        { name: "Mechanical keyboard", price: 149.0, qty: 1 },
+        { name: "Keycap set", price: 39.5, qty: 2 },
+        { name: "Coiled cable", price: 24.0, qty: 1 }
+      ];
+
+      const money = (n) => "$" + n.toFixed(2);
+      const sub = subtotal(items);
+      const total = applyDiscount(sub, 10);
+
+      document.getElementById("items").innerHTML = items
+        .map(
+          (i) =>
+            `<li><span>${i.name} <span class="qty">×${i.qty}</span></span>` +
+            `<span class="money">${money(i.price * i.qty)}</span></li>`
+        )
+        .join("");
+
+      document.getElementById("subtotal").textContent = money(sub);
+      document.getElementById("discount").textContent = "−" + money(sub - total);
+      document.getElementById("total").textContent = money(total);
+    </script>
+  </body>
+</html>
